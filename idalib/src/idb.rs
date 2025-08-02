@@ -45,7 +45,11 @@ pub struct IDB {
 #[derive(Debug, Clone)]
 pub struct IDBOpenOptions {
     idb: Option<PathBuf>,
-    // ftype: Option<String>,
+
+    #[allow(dead_code)]
+    // NOTE: the file type is only supported in IDA 9.2 and later;
+    ftype: Option<String>,
+
     save: bool,
     auto_analyse: bool,
 }
@@ -54,7 +58,7 @@ impl Default for IDBOpenOptions {
     fn default() -> Self {
         Self {
             idb: None,
-            // ftype: None,
+            ftype: None,
             save: false,
             auto_analyse: true,
         }
@@ -76,17 +80,19 @@ impl IDBOpenOptions {
         self
     }
 
-    // NOTE: as of IDA 9.1, the file type switch does not work as documented;
+    // NOTE: prior to IDA 9.2, the file type switch does not work as documented;
     // we get the following log output:
     //
     // ```
     // Unknown switch '-T' -> OK
     // ```
     //
-    // pub fn file_type(&mut self, ftype: impl AsRef<str>) -> &mut Self {
-    //   self.ftype = Some(ftype.as_ref().to_owned());
-    //   self
-    // }
+    // This functionality can be enabled with the ida92 feature flag.
+    #[cfg(feature = "ida92")]
+    pub fn file_type(&mut self, ftype: impl AsRef<str>) -> &mut Self {
+        self.ftype = Some(ftype.as_ref().to_owned());
+        self
+    }
 
     pub fn auto_analyse(&mut self, auto_analyse: bool) -> &mut Self {
         self.auto_analyse = auto_analyse;
@@ -96,11 +102,10 @@ impl IDBOpenOptions {
     pub fn open(&self, path: impl AsRef<Path>) -> Result<IDB, IDAError> {
         let mut args = Vec::new();
 
-        // NOTE: for now, we will disable this functionality (see comment on file_type above).
-        //
-        // if let Some(ftype) = self.ftype.as_ref() {
-        //    args.push(format!("-T{}", ftype));
-        // }
+        #[cfg(feature = "ida92")]
+        if let Some(ftype) = self.ftype.as_ref() {
+            args.push(format!("-T{}", ftype));
+        }
 
         if let Some(idb_path) = self.idb.as_ref() {
             args.push("-c".to_owned());
