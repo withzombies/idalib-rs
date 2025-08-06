@@ -59,14 +59,21 @@ fn main() {
 
     #[cfg(target_os = "macos")]
     {
-        let b = builder
+        let mut b = builder
             .cargo_warnings(false)
             .flag_if_supported("-std=c++17")
             .define("__MACOS__", "1")
             .define("__EA64__", "1");
 
         #[cfg(target_arch = "aarch64")]
-        let b = b.define("__ARM__", "1");
+        {
+            b = b.define("__ARM__", "1");
+        }
+
+        // Add IDA version override if ida92 feature is enabled
+        if env::var("CARGO_FEATURE_IDA92").is_ok() {
+            b = b.define("IDA_SDK_VERSION_OVERRIDE", "920");
+        }
 
         b.compile("libida-stubs");
     }

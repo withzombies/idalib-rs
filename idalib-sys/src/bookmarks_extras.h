@@ -11,7 +11,11 @@ rust::u32 idalib_bookmarks_t_mark(ea_t ea, uint32 index, const char *desc) {
   rinfo.rtype = TCCRT_FLAT;
   rinfo.pos.cx = 0;
   rinfo.pos.cy = 5;
+#if IDA_SDK_VERSION >= 920
   lochist_entry_t e(&ipl, rinfo, widget);
+#else
+  lochist_entry_t e(&ipl, rinfo);
+#endif
 
   return bookmarks_t_mark(e, index, nullptr, desc, nullptr);
 }
@@ -26,7 +30,11 @@ rust::String idalib_bookmarks_t_get_desc(uint32 index) {
   rinfo.rtype = TCCRT_FLAT;
   rinfo.pos.cx = 0;
   rinfo.pos.cy = 5;
+#if IDA_SDK_VERSION >= 920
   lochist_entry_t e(&ipl, rinfo, widget);
+#else
+  lochist_entry_t e(&ipl, rinfo);
+#endif
 
   if (bookmarks_t_get_desc(&desc, e, index, nullptr) != 0) {
     return rust::String(desc.c_str());
@@ -45,7 +53,11 @@ ea_t idalib_bookmarks_t_get(uint32 index) {
   rinfo.rtype = TCCRT_FLAT;
   rinfo.pos.cx = 0;
   rinfo.pos.cy = 5;
+#if IDA_SDK_VERSION >= 920
   lochist_entry_t e(&ipl, rinfo, widget);
+#else
+  lochist_entry_t e(&ipl, rinfo);
+#endif
 
   lochist_entry_t loc(e);
 
@@ -65,7 +77,11 @@ bool idalib_bookmarks_t_erase(uint32 index) {
   rinfo.rtype = TCCRT_FLAT;
   rinfo.pos.cx = 0;
   rinfo.pos.cy = 5;
+#if IDA_SDK_VERSION >= 920
   lochist_entry_t e(&ipl, rinfo, widget);
+#else
+  lochist_entry_t e(&ipl, rinfo);
+#endif
 
   return bookmarks_t_erase(e, index, nullptr);
 }
@@ -77,7 +93,11 @@ rust::u32 idalib_bookmarks_t_find_index(ea_t ea) {
   rinfo.rtype = TCCRT_FLAT;
   rinfo.pos.cx = 0;
   rinfo.pos.cy = 5;
+#if IDA_SDK_VERSION >= 920
   lochist_entry_t e(&ipl, rinfo, widget);
+#else
+  lochist_entry_t e(&ipl, rinfo);
+#endif
 
   return bookmarks_t_find_index(e, nullptr);
 }
@@ -91,7 +111,11 @@ rust::u32 idalib_bookmarks_t_size(void) {
   rinfo.rtype = TCCRT_FLAT;
   rinfo.pos.cx = 0;
   rinfo.pos.cy = 5;
+#if IDA_SDK_VERSION >= 920
   lochist_entry_t e(&ipl, rinfo, widget);
+#else
+  lochist_entry_t e(&ipl, rinfo);
+#endif
 
   return bookmarks_t_size(e, nullptr);
 }
