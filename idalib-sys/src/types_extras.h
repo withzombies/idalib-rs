@@ -115,3 +115,27 @@ inline rust::String idalib_get_type_string_at_address(std::uint64_t ea) {
 
   return rust::String(type_str);
 }
+
+// ============================================================================
+// Type Builder FFI Functions
+// ============================================================================
+
+// Create a simple primitive type ordinal
+inline std::uint32_t idalib_create_primitive_type(std::uint32_t bt_type) {
+  // For now, just return predefined ordinals for basic types
+  // These are typically standard in IDA's type system
+  switch (bt_type) {
+    case 0x00: return 1;  // void
+    case 0x01: return 2;  // int8
+    case 0x02: return 3;  // int16
+    case 0x03: return 4;  // int32
+    case 0x04: return 5;  // int64
+    case 0x05: return 6;  // uint8
+    case 0x06: return 7;  // uint16
+    case 0x07: return 8;  // uint32
+    case 0x08: return 9;  // uint64
+    case 0x09: return 10; // float
+    case 0x0A: return 11; // double
+    default: return 0;
+  }
+}

@@ -22,13 +22,14 @@ pub enum TypeFlags {
     STRICT = 0x0004,
 }
 
+#[derive(Debug)]
 pub struct Type {
     // We'll store the type ordinal instead of the tinfo_t directly
     ordinal: TypeIndex,
 }
 
 impl Type {
-    pub(crate) fn from_ordinal(ordinal: TypeIndex) -> Self {
+    pub fn from_ordinal(ordinal: TypeIndex) -> Self {
         Self { ordinal }
     }
 

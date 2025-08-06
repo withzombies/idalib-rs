@@ -29,7 +29,28 @@ fn main() {
     let sdk_path = PathBuf::from(env::var("IDASDKDIR").expect("IDASDKDIR should be set"));
     let ida = sdk_path.join("include");
 
+    let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+    let src_dir = manifest_dir.join("src");
+    
     cxx_build::CFG.exported_header_dirs.push(&ida);
+    cxx_build::CFG.exported_header_dirs.push(&src_dir);
+
+    // Build the CXX bridge for type builders
+    let mut cxx_bridge = cxx_build::bridge("src/types_bridge.rs");
+    cxx_bridge
+        .include(&ida)
+        .include(&src_dir)
+        .flag_if_supported("-std=c++17")
+        .flag_if_supported("-D__MACOS__=1")
+        .flag_if_supported("-D__EA64__=1")
+        .flag_if_supported("-D__ARM__=1");
+
+    // Add IDA version define if ida92 feature is enabled
+    if env::var("CARGO_FEATURE_IDA92").is_ok() {
+        cxx_bridge.flag_if_supported("-DIDA_SDK_VERSION_OVERRIDE=920");
+    }
+
+    cxx_bridge.compile("types_bridge");
 
     let ffi_path = PathBuf::from("src");
 

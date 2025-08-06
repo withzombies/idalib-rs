@@ -11,6 +11,9 @@ use thiserror::Error;
 
 mod platform;
 
+// CXX bridge for type builder functions
+pub mod types_bridge;
+
 #[derive(Debug, Error)]
 pub enum IDAError {
     #[error(transparent)]
@@ -1062,6 +1065,8 @@ mod ffix {
         unsafe fn idalib_apply_type_by_decl(ea: c_ulonglong, decl: *const c_char) -> bool;
         unsafe fn idalib_get_type_ordinal_at_address(ea: c_ulonglong) -> u32;
         unsafe fn idalib_get_type_string_at_address(ea: c_ulonglong) -> Result<String>;
+        // Type builder functions
+        unsafe fn idalib_create_primitive_type(bt_type: u32) -> u32;
     }
 }
 
@@ -1451,5 +1456,16 @@ pub mod types {
         idalib_tinfo_get_name_by_ordinal, idalib_is_valid_type_ordinal,
         idalib_apply_type_by_ordinal, idalib_apply_type_by_decl,
         idalib_get_type_ordinal_at_address, idalib_get_type_string_at_address,
+        idalib_create_primitive_type,
+    };
+    // CXX bridge functions for type creation
+    pub use super::types_bridge::ffi_types::{
+        create_struct_type, create_union_type, add_field_to_type,
+        finalize_type, get_primitive_type_ordinal, get_type_size,
+        create_enum_type, add_enum_member,
+        create_array_type, create_pointer_type,
+        add_bitfield_to_struct,
+        create_function_type, add_function_parameter,
+        set_function_attributes, create_function_pointer_type,
     };
 }
